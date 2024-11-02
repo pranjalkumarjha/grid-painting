@@ -1,4 +1,3 @@
-// utils/calculateDiff.js 
 const calculateDiff = (oldCellColor,newCellColor)=>{// returns object representing {key:[oldcellcolor,newcellcolor]}
 
         let changes = {}; 
@@ -13,7 +12,6 @@ const calculateDiff = (oldCellColor,newCellColor)=>{// returns object representi
         return changes;
 }
 const undo = (currentHead,history,newCellColor)=>{ // pass currentHead by reference or make a global context
-    currentHead.current = Math.max(0,currentHead.current-1);  
     console.log(currentHead.current);
     const changes = history.current[currentHead.current].diff;  // history has an object named diff && history.current is array
     console.log('changes in the undo',changes); 
@@ -22,10 +20,10 @@ const undo = (currentHead,history,newCellColor)=>{ // pass currentHead by refere
         newCellColor[key] = changes[key][0];
     }
 
+    currentHead.current = Math.max(0,currentHead.current-1);  
     return {newCellColor};
 } 
 const redo = (currentHead,history,newCellColor)=>{ // pass currentHead by reference or make a global context
-    currentHead.current = Math.min(history.current.length-1,currentHead.current+1); 
 
     console.log(currentHead.current);
     const changes = history.current[currentHead.current].diff;  // history has an object named diff && history.current is array
@@ -35,8 +33,10 @@ const redo = (currentHead,history,newCellColor)=>{ // pass currentHead by refere
         newCellColor[key] = changes[key][1];
     }
 
+
+
+    currentHead.current = Math.min(history.current.length-1,currentHead.current+1); 
     return {newCellColor};
 
 }
-
 export {calculateDiff,undo,redo}

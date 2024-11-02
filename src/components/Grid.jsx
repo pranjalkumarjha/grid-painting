@@ -1,14 +1,11 @@
-import React,{useEffect, useRef, useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import { useRowCol } from '../context/RowColContext';
-import undoIcon from '../assets/undoIcon.svg'
-import redoIcon from '../assets/redoIcon.svg'
-import {calculateDiff, undo, redo} from '../utils/calculateDiff';
+
 const Grid = ()=>{ 
     const {row,column,chosenColor} = useRowCol();   
     const [mouseDown,setMouseDown] = useState(false); 
     const [click,setClick] = useState(false);  
     const defaultColor = 'white';
-    let history = useRef([]);
     const [cellColor,setCellColor] = useState(Array(row * column).fill(defaultColor)); 
     const lastCellColor = useRef(cellColor);
     const currentHead = useRef(0);
@@ -108,11 +105,6 @@ const Grid = ()=>{
            
            {renderColumns()}
            {console.log('row and column changed and component rerendered')}
-
-        </div>
-        <div className='flex gap-5'>
-            <div className='undo w-5' onClick={handleUndo}><img src={undoIcon} alt="undo" /></div> 
-            <div className='redo w-5' onClick={handleRedo}><img src={redoIcon} alt="redo" /></div>
 
         </div>
         </div>
