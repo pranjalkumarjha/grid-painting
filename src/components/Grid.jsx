@@ -1,12 +1,18 @@
-import React,{useEffect, useState} from 'react';
+import React,{useEffect, useRef, useState} from 'react';
 import { useRowCol } from '../context/RowColContext';
-
+import undoIcon from '../assets/undoIcon.svg'
+import redoIcon from '../assets/redoIcon.svg'
+import {calculateDiff, undo, redo} from '../utils/calculateDiff';
 const Grid = ()=>{ 
     const {row,column,chosenColor} = useRowCol();   
     const [mouseDown,setMouseDown] = useState(false); 
     const [click,setClick] = useState(false);  
     const defaultColor = 'white';
+    let history = useRef([]);
     const [cellColor,setCellColor] = useState(Array(row * column).fill(defaultColor)); 
+    const lastCellColor = useRef(cellColor);
+    const currentHead = useRef(history.length-1);
+
     console.log('row and column changed');
     const handleClick = (key)=>{
         setCellColor((prevColor)=>{
@@ -61,11 +67,38 @@ const Grid = ()=>{
             }
             return grid;
     }
+    const handleUndo = ()=>{
+        const {newCellColor} = undo(currentHead,history,[...cellColor]); 
+          setCellColor(newCellColor); 
+        // currentHead.current = newHead;
+    } 
+    const handleRedo = ()=>{ 
+        console.log(currentHead.current);
+        const {newCellColor} = redo(currentHead,history,[...cellColor]); 
+        setCellColor(newCellColor); 
+        // console.log(newCellColor);
+    }
     useEffect(() => {
         // reset all the colors on change in row and columns
         setCellColor(Array(row * column).fill(defaultColor));
     }, [row, column]);
+    useEffect(() => {
+        if(!mouseDown || click){ // save changes upon mouseUp event
+            const diff = calculateDiff(lastCellColor.current,cellColor); 
+            if (row && column && Object.keys(diff).length > 0) {
+                // Truncate history if the currentHead is not at the latest entry
+                if (currentHead.current < history.current.length - 1) {
+                    history.current = history.current.slice(0, currentHead.current + 1);
+                }
+                
+                // Push new entry to history
+                history.current.push({ row, column, diff });
+                currentHead.current = history.current.length - 1;
+            }
+        }
+        lastCellColor.current = cellColor;
 
+    }, [mouseDown,click]);
     return(
         <div className='flex justify-center flex-col items-center gap-1'> 
         GRID
@@ -73,6 +106,11 @@ const Grid = ()=>{
            
            {renderColumns()}
            {console.log('row and column changed and component rerendered')}
+
+        </div>
+        <div className='flex gap-5'>
+            <div className='undo w-5' onClick={handleUndo}><img src={undoIcon} alt="undo" /></div> 
+            <div className='redo w-5' onClick={handleRedo}><img src={redoIcon} alt="redo" /></div>
 
         </div>
         </div>
