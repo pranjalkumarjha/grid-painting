@@ -4,20 +4,36 @@ import { useRowCol } from '../context/RowColContext';
 const Grid = ()=>{ 
     const {row,column,chosenColor} = useRowCol();   
     const [mouseDown,setMouseDown] = useState(false); 
-    const [click,setClick] = useState(false); 
-    const [cellColor,setCellColor] = useState(Array(row * column).fill(false));
+    const [click,setClick] = useState(false);  
+    const defaultColor = 'white';
+    const [cellColor,setCellColor] = useState(Array(row * column).fill(defaultColor)); 
+    console.log('row and column changed');
     const handleClick = (key)=>{
         setCellColor((prevColor)=>{
             const curColor = [...prevColor]; // cannot do let curColor = cellColor as curColor & cellColor both will end up having the same reference and react doesn't rerender if the reference doesn't change 
-            curColor[key] = !curColor[key]; 
+            if(curColor[key]===defaultColor){
+                curColor[key] = chosenColor;
+            }
+            else{
+                curColor[key] = defaultColor;
+
+            }
             return curColor;
         });
+        console.log(chosenColor);
+        console.log(cellColor);
     } 
     const handleMouseEnter =(key)=>{ 
         if(mouseDown){
         setCellColor((prevColor)=>{
             const curColor = [...prevColor]; 
-            curColor[key] = !curColor[key]; 
+            if(curColor[key]===defaultColor){
+                curColor[key] = chosenColor;
+            }
+            else{
+                curColor[key] = defaultColor;
+
+            }
             return curColor;
         });
     }
@@ -33,12 +49,11 @@ const Grid = ()=>{
                           border: '1px solid black',
                           padding: '1px',
                           textAlign: 'center',
-                          backgroundColor: `${cellColor[key]?chosenColor:'white'}`
+                          backgroundColor: `${cellColor[key]}`,
                         }} 
 
                         onMouseDown={()=>setMouseDown(true)} 
                         onMouseUp={()=>setMouseDown(false)} 
-                        key = {key}
                         onClick = {()=>{setClick(!click);handleClick(key)}} 
                         onMouseEnter={() => {handleMouseEnter(key)}}
                         > </div>); 
@@ -46,17 +61,18 @@ const Grid = ()=>{
             }
             return grid;
     }
-    useEffect(()=>{ 
-        if((mouseDown) || click) 
-        console.log(cellColor)
-        console.log('fill color now')
-    },[mouseDown,click])
+    useEffect(() => {
+        // reset all the colors on change in row and columns
+        setCellColor(Array(row * column).fill(defaultColor));
+    }, [row, column]);
+
     return(
         <div className='flex justify-center flex-col items-center gap-1'> 
         GRID
         <div className="grid" style={{gridTemplateColumns:`repeat(${column},${'100'/column}%)`,height:'500px',width:'500px'}}>
            
            {renderColumns()}
+           {console.log('row and column changed and component rerendered')}
 
         </div>
         </div>
