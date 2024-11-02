@@ -11,7 +11,7 @@ const Grid = ()=>{
     const handleClick = (key)=>{
         setCellColor((prevColor)=>{
             const curColor = [...prevColor]; // cannot do let curColor = cellColor as curColor & cellColor both will end up having the same reference and react doesn't rerender if the reference doesn't change 
-            if(curColor[key]===defaultColor){
+            if(curColor[key]===defaultColor || curColor[key]!==chosenColor){
                 curColor[key] = chosenColor;
             }
             else{
@@ -27,7 +27,7 @@ const Grid = ()=>{
         if(mouseDown){
         setCellColor((prevColor)=>{
             const curColor = [...prevColor]; 
-            if(curColor[key]===defaultColor){
+            if(curColor[key]===defaultColor || curColor[key]!==chosenColor){
                 curColor[key] = chosenColor;
             }
             else{
