@@ -69,7 +69,7 @@ const Grid = ()=>{
     return(
         <div className='flex justify-center flex-col items-center gap-1'> 
         GRID
-        <div className="grid" style={{gridTemplateColumns:`repeat(${column},${'100'/column}%)`,height:'500px',width:'500px'}}>
+        <div className="grid" style={{gridTemplateColumns:`repeat(${column},${'100'/column}%)`,height:'500px',width:'100%',maxHeight:'500px',maxWidth:'500px'}}>
            
            {renderColumns()}
            {console.log('row and column changed and component rerendered')}
