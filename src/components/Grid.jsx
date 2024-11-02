@@ -11,7 +11,7 @@ const Grid = ()=>{
     let history = useRef([]);
     const [cellColor,setCellColor] = useState(Array(row * column).fill(defaultColor)); 
     const lastCellColor = useRef(cellColor);
-    const currentHead = useRef(history.length-1);
+    const currentHead = useRef(0);
 
     console.log('row and column changed');
     const handleClick = (key)=>{
@@ -26,8 +26,6 @@ const Grid = ()=>{
             }
             return curColor;
         });
-        console.log(chosenColor);
-        console.log(cellColor);
     } 
     const handleMouseEnter =(key)=>{ 
         if(mouseDown){
@@ -57,7 +55,7 @@ const Grid = ()=>{
                           textAlign: 'center',
                           backgroundColor: `${cellColor[key]}`,
                         }} 
-
+                        key={key}
                         onMouseDown={()=>setMouseDown(true)} 
                         onMouseUp={()=>setMouseDown(false)} 
                         onClick = {()=>{setClick(!click);handleClick(key)}} 
@@ -69,14 +67,15 @@ const Grid = ()=>{
     }
     const handleUndo = ()=>{
         const {newCellColor} = undo(currentHead,history,[...cellColor]); 
+        lastCellColor.current = newCellColor; 
+        console.log(lastCellColor.current);
           setCellColor(newCellColor); 
-        // currentHead.current = newHead;
     } 
     const handleRedo = ()=>{ 
-        console.log(currentHead.current);
         const {newCellColor} = redo(currentHead,history,[...cellColor]); 
+        lastCellColor.current = newCellColor;
+        console.log(lastCellColor.current);
         setCellColor(newCellColor); 
-        // console.log(newCellColor);
     }
     useEffect(() => {
         // reset all the colors on change in row and columns
@@ -84,17 +83,20 @@ const Grid = ()=>{
     }, [row, column]);
     useEffect(() => {
         if(!mouseDown || click){ // save changes upon mouseUp event
-            const diff = calculateDiff(lastCellColor.current,cellColor); 
+            const diff = calculateDiff(lastCellColor.current,cellColor);  
+            console.log(currentHead.current)
             if (row && column && Object.keys(diff).length > 0) {
                 // Truncate history if the currentHead is not at the latest entry
                 if (currentHead.current < history.current.length - 1) {
-                    history.current = history.current.slice(0, currentHead.current + 1);
+                    history.current = history.current.slice(0, currentHead.current+1);
                 }
                 
                 // Push new entry to history
                 history.current.push({ row, column, diff });
                 currentHead.current = history.current.length - 1;
+                // update lastCellColor.current based on the latest entry in the history 
             }
+            
         }
         lastCellColor.current = cellColor;
 
