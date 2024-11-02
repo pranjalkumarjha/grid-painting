@@ -36,7 +36,6 @@ const Grid = ()=>{
             }
             else{
                 curColor[key] = defaultColor;
-
             }
             return curColor;
         });
@@ -69,13 +68,25 @@ const Grid = ()=>{
         const {newCellColor} = undo(currentHead,history,[...cellColor]); 
         lastCellColor.current = newCellColor; 
         console.log(lastCellColor.current);
-          setCellColor(newCellColor); 
+        setCellColor((prevColor)=>{
+            const tempCellColor = [...prevColor]; 
+            for(let i =0;i<tempCellColor.length;i++){
+                tempCellColor[i] = newCellColor[i];
+            } 
+            return tempCellColor;
+        });  
     } 
     const handleRedo = ()=>{ 
         const {newCellColor} = redo(currentHead,history,[...cellColor]); 
         lastCellColor.current = newCellColor;
         console.log(lastCellColor.current);
-        setCellColor(newCellColor); 
+        setCellColor((prevColor)=>{
+            const tempCellColor = [...prevColor]; 
+            for(let i =0;i<tempCellColor.length;i++){
+                tempCellColor[i] = newCellColor[i];
+            } 
+            return tempCellColor;
+        });  
     }
     useEffect(() => {
         // reset all the colors on change in row and columns

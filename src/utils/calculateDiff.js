@@ -24,7 +24,7 @@ const undo = (currentHead,history,newCellColor)=>{ // pass currentHead by refere
     return {newCellColor};
 } 
 const redo = (currentHead,history,newCellColor)=>{ // pass currentHead by reference or make a global context
-
+    currentHead.current = Math.min(history.current.length-1,currentHead.current+1); 
     console.log(currentHead.current);
     const changes = history.current[currentHead.current].diff;  // history has an object named diff && history.current is array
     console.log('changes in the redo',changes); 
@@ -35,7 +35,6 @@ const redo = (currentHead,history,newCellColor)=>{ // pass currentHead by refere
 
 
 
-    currentHead.current = Math.min(history.current.length-1,currentHead.current+1); 
     return {newCellColor};
 
 }
