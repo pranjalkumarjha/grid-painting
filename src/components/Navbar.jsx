@@ -13,7 +13,7 @@ const Navbar = () => {
                     placeholder="Enter number of rows"
                     className="border-solid border-2 border-black pl-2"
                     onChange={(e) => { 
-                        if(e.target.value<=50) 
+                        if(e.target.value<=100) 
                             setRow(Number(e.target.value))}} 
                     min="1"
                 />
@@ -22,7 +22,7 @@ const Navbar = () => {
                     placeholder="Enter number of columns"
                     className="border-solid border-2 border-black pl-2"
                     onChange={(e) => {
-                        if(e.target.value<=50)
+                        if(e.target.value<=100)
                             setColumn(Number(e.target.value))}} 
                     min="1"
                 />
