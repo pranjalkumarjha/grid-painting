@@ -13,14 +13,14 @@ const calculateDiff = (oldCellColor,newCellColor)=>{// returns object representi
 }
 const undo = (currentHead,history,newCellColor)=>{ // pass currentHead by reference or make a global context
     console.log(currentHead.current);
-    const changes = history.current[currentHead.current].diff;  // history has an object named diff && history.current is array
+    const changes = history.current[currentHead.current]?.diff;  // history has an object named diff && history.current is array
     console.log('changes in the undo',changes); 
 
     for(let key in changes){
         newCellColor[key] = changes[key][0];
     }
 
-    currentHead.current = Math.max(0,currentHead.current-1);  
+    currentHead.current = Math.max(-1,currentHead.current-1);  
     return {newCellColor};
 } 
 const redo = (currentHead,history,newCellColor)=>{ // pass currentHead by reference or make a global context
