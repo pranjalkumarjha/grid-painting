@@ -1,15 +1,14 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const Canvas = () => {
   const canvasRef = useRef(null); 
-  const x = useRef(0);
-  const y = useRef(0); 
+  const [cursorPosition,setCursorPosition] = useState({x:0,y:0});
   const startingX = useRef(-1); 
   const startingY = useRef(-1); 
   const mouseDown = useRef(false);
+  const ctx = useRef(null);
   let canvas=null;
-  let ctx=null;
-  let offsetTop=null; // adjusting for the canvas not being on the topmost part of the page
+  let offsetTop=0; // adjusting for the canvas not being on the topmost part of the page
   const handleMouseUp = (e)=>{ 
       startingX.current = -1; 
       startingY.current = -1;
@@ -25,27 +24,31 @@ const Canvas = () => {
     } 
   }
   const handleMouseMove = (e)=>{
+    setCursorPosition({
+      x:e.clientX,
+      y: e.clientY
+    }
+    )
     if(mouseDown.current){
-      x.current = e.clientX; 
-      y.current = e.clientY;
-      console.log('mouseup: starting(x,y) and ending(x,y):',startingX.current,startingY.current,x.current,y.current);
-      ctx.beginPath();
-      ctx.moveTo(startingX.current,startingY.current-offsetTop);
-      ctx.lineTo(x.current,y.current-offsetTop);
-      ctx.stroke(); 
-      startingX.current = x.current; 
-      startingY.current = y.current;
+     
+      console.log('mouseup: starting(x,y) and ending(x,y):',startingX.current,startingY.current,cursorPosition.x,cursorPosition.y);
+      ctx.current.beginPath();
+      ctx.current.moveTo(startingX.current,startingY.current-offsetTop);
+      ctx.current.lineTo(cursorPosition.x,cursorPosition.y-offsetTop);
+      ctx.current.stroke(); 
+      startingX.current = cursorPosition.x; 
+      startingY.current = cursorPosition.y;
     } 
   }
   useEffect(()=>{
     canvas = canvasRef.current
-    ctx = canvas.getContext("2d");
+    ctx.current = canvas.getContext("2d");
     offsetTop = canvas.getBoundingClientRect().top; 
 
   },[]);
 
   return (
-    <div className='w-screen h-screen overflow-auto border border-black cursor-crosshair' 
+    <div className='canvas-container w-screen h-screen overflow-auto border border-black cursor-none' 
       onMouseDown={(e)=>{ 
         handleMouseDown(e);
       
@@ -57,7 +60,14 @@ const Canvas = () => {
         handleMouseMove(e);
       }}
     >
-      <canvas ref={canvasRef} width="1500" height="1500" />
+      <canvas ref={canvasRef} width="1500" height="1500"/>
+      <div
+        className="custom-dot"
+        style={{
+          top: `${cursorPosition.y}px`, // Offset by 5px for better alignment
+          left: `${cursorPosition.x }px`, // Offset by 5px for better alignment
+        }}
+      ></div>
     </div>
   );
 };

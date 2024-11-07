@@ -16,3 +16,20 @@ body{
         flex-direction: column;
     }
 }   
+/* styles.css */
+
+/* Hide the default cursor */
+.canvas-container {
+    position: relative; /* Make it easy to position the custom cursor */
+  }
+  
+  /* Style for the custom dot cursor */
+.custom-dot {
+    position: absolute;
+    width: 3px; /* Size of the dot */
+    height: 3px; /* Size of the dot */
+    background-color: black; /* Color of the dot */
+    border-radius: 50%; /* Make it round */
+    pointer-events: none; /* Ensure it doesn't interfere with other events */
+  }
+  
