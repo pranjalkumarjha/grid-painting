@@ -3,6 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+    overflow: scroll;
+}
+.canvas{
+    cursor:crosshair;
+    border: 1px solid black;
+    overflow: auto;
+}
 @media (max-width: 768px) {
     .navbar{
         flex-direction: column;

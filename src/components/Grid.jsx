@@ -12,9 +12,10 @@ const Grid = () => {
     const [cellColor, setCellColor] = useState(Array(row * column).fill(defaultColor));
     const lastCellColor = useRef(cellColor);
     const currentHead = useRef(-1);
-    const x = useRef(0); 
-    const y = useRef(0);
-
+    const x = useRef(0);
+    const y = useRef(0); 
+    const [gridScale,setGridScale] = useState(1);
+    const gridRef = useRef(null);
     console.log('row and column changed');
     const handleClick = (key) => {
         setCellColor((prevColor) => {
@@ -22,31 +23,48 @@ const Grid = () => {
             if (curColor[key] !== chosenColor) {
                 curColor[key] = chosenColor;
             }
-            
+
             return curColor;
         });
     }
-    const handleMouseEnter = (key) => {
+    const handleMouseEnter = (e,key) => { 
+        
         if (mouseDown) {
             setCellColor((prevColor) => {
                 const curColor = [...prevColor];
                 if (curColor[key] !== chosenColor) {
                     curColor[key] = chosenColor;
                 }
-                
+
                 return curColor;
             });
         }
+    } 
+    // need to implement ctrl + mouseDown + cursor = grid moves in opposite direction
+    const handleMoveGrid = (e)=>{
+         if(e.ctrlKey && mouseDown){
+
+            
+
+         }
     }
-    
     const handleMouseMove = (e) => {
         x.current = e.clientX;
         y.current = e.clientY;
         console.log(x.current, y.current);
     }
-    const handleWheel = () => {
-        
-        console.log('wheel moved: ',x.current, y.current);
+    const handleWheel = (e) => { 
+        const gridRect = gridRef.current.getBoundingClientRect(); 
+        e.preventDefault();
+        console.log(gridRef.current);
+        console.log('gridRect top and left',gridRect.top,gridRect.left);
+         if(e.deltaY>0){
+            setGridScale(Math.max(0.2,gridScale-0.2)); 
+         } 
+         else{
+            setGridScale(gridScale+0.2);
+         }
+        console.log('wheel moved: ', e.deltaY);
     }
     const renderColumns = () => {
         let grid = [];
@@ -56,15 +74,16 @@ const Grid = () => {
                 grid.push(<div className="grid-item"
                     style={{
                         border: '1px solid black',
-                        padding: '1px',
+                        padding: '0.01rem',
                         textAlign: 'center',
                         backgroundColor: `${cellColor[key]}`,
+                        
                     }}
                     key={key}
                     onMouseDown={() => setMouseDown(true)}
                     onMouseUp={() => setMouseDown(false)}
                     onClick={() => { setClick(!click); handleClick(key) }}
-                    onMouseEnter={() => { handleMouseEnter(key) }}
+                    onMouseEnter={(e) => { handleMouseEnter(e,key) }}
                 > </div>);
             }
         }
@@ -96,7 +115,10 @@ const Grid = () => {
     }
     useEffect(() => {
         // reset all the colors on change in row and columns
+        if(row && column){
         setCellColor(Array(row * column).fill(defaultColor));
+        setGridScale(1);
+        }
     }, [row, column]);
     useEffect(() => {
         if (!mouseDown || click) { // save changes upon mouseUp event
@@ -117,25 +139,39 @@ const Grid = () => {
         }
         lastCellColor.current = cellColor;
 
-    }, [mouseDown, click]);
+    }, [mouseDown, click]); 
+    useEffect(() => {
+        const gridElement = gridRef.current;
+
+        const wheelListener = (e) => handleWheel(e);
+
+        // Add the event listener
+        gridElement.addEventListener('wheel', wheelListener, { passive: false });
+
+        // Cleanup the event listener on component unmount
+        return () => {
+            gridElement.removeEventListener('wheel', wheelListener);
+        };
+    }, [gridScale]);
     return (
         <div className='flex justify-center flex-col items-center gap-1'>
             GRID
-            <div 
+            <div
                 className="grid"
                 style={
                     {
-                        gridTemplateColumns: `repeat(${column},${'100' / column}%)`, 
-                        height: '500px', 
-                        width: '100%', 
+                        gridTemplateColumns: `repeat(${column},${'100' / column}%)`,
+                        height: '500px',
+                        width: '100%',
                         maxHeight: '500px',
                         maxWidth: '500px',
-                        cursor: 'crosshair'
-
+                        cursor: 'crosshair',
+                        transform: `scale(${gridScale})`
                     }
                 }
-                onWheel={handleWheel}
-                onMouseMove={(e) => handleMouseMove(e)}>
+                ref = {gridRef} 
+                onKeyDown={(e)=>{handleMoveGrid(e)}}
+            >
                 {renderColumns()}
                 {console.log('row and column changed and component rerendered')}
 
