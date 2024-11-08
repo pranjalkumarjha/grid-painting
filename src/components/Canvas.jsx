@@ -8,7 +8,7 @@ const Canvas = () => {
   const mouseDown = useRef(false);
   const ctx = useRef(null);
   let canvas=null;
-  let offsetTop=0; // adjusting for the canvas not being on the topmost part of the page
+  const [offsetTop,setOffsetTop]=useState(0); // adjusting for the canvas not being on the topmost part of the page
   const handleMouseUp = (e)=>{ 
       startingX.current = -1; 
       startingY.current = -1;
@@ -43,7 +43,7 @@ const Canvas = () => {
   useEffect(()=>{
     canvas = canvasRef.current
     ctx.current = canvas.getContext("2d");
-    offsetTop = canvas.getBoundingClientRect().top; 
+    setOffsetTop(canvas.getBoundingClientRect().top); 
 
   },[]);
 
@@ -60,12 +60,14 @@ const Canvas = () => {
         handleMouseMove(e);
       }}
     >
-      <canvas ref={canvasRef} width="1500" height="1500"/>
+      <canvas ref={canvasRef} width="1500" height="1500"/> 
+      
       <div
         className="custom-dot"
+        
         style={{
-          top: `${cursorPosition.y}px`, // Offset by 5px for better alignment
-          left: `${cursorPosition.x }px`, // Offset by 5px for better alignment
+          top: `${cursorPosition.y-offsetTop}px`, 
+          left: `${cursorPosition.x }px`, 
         }}
       ></div>
     </div>
