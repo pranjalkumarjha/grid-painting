@@ -18,29 +18,7 @@ const Canvas = () => {
   const [offsetTop, setOffsetTop] = useState(0); // adjusting for the canvas not being on the topmost part of the page
   const handleMouseUp = (e) => {
 
-    if (mouseDown.current && pointerType === 'selector' && selectedCurve.current !== -1) {
-      let dx = Number(e.clientX) - Number(startingX.current);
-      let dy = Number(e.clientY) - Number(startingY.current);
-      let curve = curves.current[selectedCurve.current];
-      console.log(dx);
-      // deleting old path
-      for (let i = 0; i < curve.length; i++) {
-        curve[i].x = curve[i].x + dx;
-        curve[i].y = curve[i].y + dy;
-      }
-      // redrawing the whole canvas
-      console.log(canvasRef.current.width, canvasRef.current.height);
-      ctx.current.clearRect(0, 0 - offsetTop, canvasRef.current.width, canvasRef.current.height); // maybe we could just clear a specific part in future and redraw only relevent curves and parts
-      curves.current.forEach((curve) => {
-        for (let i = 1; i < curve.length; i++) {
-          ctx.current.beginPath();
-          ctx.current.moveTo(curve[i - 1].x, curve[i - 1].y);
-          ctx.current.lineTo(curve[i].x, curve[i].y);
-          ctx.current.stroke();
-        }
-      });
-
-    }
+   
 
     console.log('mouseUp');
     if (currentCurve.current.length !== 0) {
@@ -131,7 +109,30 @@ const Canvas = () => {
       startingX.current = cursorPosition.x;
       startingY.current = cursorPosition.y;
     }
-
+    if (mouseDown.current && pointerType === 'selector' && selectedCurve.current !== -1) {
+      let dx = Number(e.clientX) - Number(startingX.current);
+      let dy = Number(e.clientY) - Number(startingY.current);
+      let curve = curves.current[selectedCurve.current];
+      console.log(dx);
+      // deleting old path
+      for (let i = 0; i < curve.length; i++) {
+        curve[i].x = curve[i].x + dx;
+        curve[i].y = curve[i].y + dy;
+      }
+      // redrawing the whole canvas
+      console.log(canvasRef.current.width, canvasRef.current.height);
+      ctx.current.clearRect(0, 0 - offsetTop, canvasRef.current.width, canvasRef.current.height); // maybe we could just clear a specific part in future and redraw only relevent curves and parts
+      curves.current.forEach((curve) => {
+        for (let i = 1; i < curve.length; i++) {
+          ctx.current.beginPath();
+          ctx.current.moveTo(curve[i - 1].x, curve[i - 1].y);
+          ctx.current.lineTo(curve[i].x, curve[i].y);
+          ctx.current.stroke();
+        }
+      });
+      startingX.current = e.clientX;
+      startingY.current = e.clientY;
+    }
   }
   useEffect(() => {
     canvas = canvasRef.current

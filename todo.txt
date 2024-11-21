@@ -2,6 +2,7 @@
 0.Feature: recognize as one figure 
            (lasso or highlight square which leads to everything inside it to become one unit and they can be moved around by selecting) 
 
-1. 
+1. Feature: animate movement of shapes drawn
+
 2. 
 3. 
