@@ -1,10 +1,10 @@
 // Navbar.jsx
-import React, { useEffect } from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
 
 const Navbar = () => {
-    const { row, column, setRow, setColumn,chosenColor,setChosenColor} = useRowCol(); //   Use the hook to access context values
-
+    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType} = useRowCol(); //   Use the hook to access context values
+    useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
     return (
         <>
             <div className="navbar flex justify-center items-center gap-2 pt-2">
@@ -28,9 +28,13 @@ const Navbar = () => {
                 />
                 Color Picker
                 <input type="color" id="chosenColor" name="chosenColor" value={chosenColor} onChange={(e)=>{setChosenColor(e.target.value)}}/>
+                select pointer type
+                <button onClick={()=>{setPointerType("precise")}} className='border-solid border-2 p-1'>Precise</button>
+                <button onClick={()=>{setPointerType("selector");}} className='border-solid border-2 p-1'>selector</button>
+            
             </div>
-            Rows: {row} <br />
-            Columns: {column}
+            {/* Rows: {row} <br />
+            Columns: {column} */}
         </>
     );
 }

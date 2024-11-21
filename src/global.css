@@ -4,8 +4,11 @@
 @tailwind utilities;
 
 body{
-    overflow: scroll;
+    
 }
+/* .navbar{
+    position: absolute;
+} */
 .canvas{
     cursor:crosshair;
     border: 1px solid black;
@@ -26,10 +29,13 @@ body{
   /* Style for the custom dot cursor */
 .custom-dot {
     position: absolute;
-    width: 3px; /* Size of the dot */
-    height: 3px; /* Size of the dot */
-    background-color: black; /* Color of the dot */
-    border-radius: 50%; /* Make it round */
-    pointer-events: none; /* Ensure it doesn't interfere with other events */
-  }
-  
+    width: 3px; 
+    height: 3px;
+    background-color: black; 
+     border-radius: 50%; 
+
+}
+
+.arrow{
+    display: none;
+}

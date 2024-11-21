@@ -1,0 +1,7 @@
+
+0.Feature: recognize as one figure 
+           (lasso or highlight square which leads to everything inside it to become one unit and they can be moved around by selecting) 
+
+1. 
+2. 
+3. 
