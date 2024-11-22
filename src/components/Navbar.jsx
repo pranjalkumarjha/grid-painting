@@ -3,8 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
 
 const Navbar = () => {
-    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay} = useRowCol(); //   Use the hook to access context values
+    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups} = useRowCol(); //   Use the hook to access context values
     useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
+    const handleGroupSelectionOnClick = ()=>{ 
+        allGroups.current = [...allGroups.current,[...group]]; 
+        console.log(allGroups.current);
+        setGroup([]); 
+
+    }
     return (
         <>
             <div className="navbar flex justify-center items-center gap-2 pt-2">
@@ -33,6 +39,8 @@ const Navbar = () => {
                 <button onClick={()=>{setPointerType("selector");}} className='border-solid border-2 p-1'>Selector</button>
                 <button onClick={()=>{setPointerType("animatePath");}} className='border-solid border-2 p-1'>Animate Path</button>
                 <button onClick={()=>{setPlay(!play)}} className='border-solid border-2 p-1'>Play Animation</button>
+                <button onClick={handleGroupSelectionOnClick} className='border-solid border-2 p-1'>Group Selection</button>
+
             </div>
             {/* Rows: {row} <br />
             Columns: {column} */}

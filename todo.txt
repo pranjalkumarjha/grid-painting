@@ -4,5 +4,6 @@
 
 1. Feature: animate movement of shapes drawn
 
-2. Feature: group curves by selecting
+2. Feature: group curves by selecting 
+            need to insert into curves such that once grouped we can ungroup too
 3. Feature: Eraser (objects and paths)
