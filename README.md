@@ -1,6 +1,11 @@
 # A WHITEBOARD APPLICATION TO ANIMATE MOVEMENTS OF OBJECTS BY DRAWING THEIR PATHS 
-[Watch the video](./animation-demo.webm)
 
+[Watch the video](./animation-demo.webm)
+Steps to animate: 
+ 1. use precise pointer to draw in one go. 
+ 2. use selector pointer to mark the curve to draw the path for
+ 3. use animate path pointer to draw the curve in one go 
+ 4. click on play animation button to watch the animation
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
