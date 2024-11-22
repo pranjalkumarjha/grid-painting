@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
 
 const Navbar = () => {
-    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType} = useRowCol(); //   Use the hook to access context values
+    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay} = useRowCol(); //   Use the hook to access context values
     useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
     return (
         <>
@@ -30,8 +30,9 @@ const Navbar = () => {
                 <input type="color" id="chosenColor" name="chosenColor" value={chosenColor} onChange={(e)=>{setChosenColor(e.target.value)}}/>
                 select pointer type
                 <button onClick={()=>{setPointerType("precise")}} className='border-solid border-2 p-1'>Precise</button>
-                <button onClick={()=>{setPointerType("selector");}} className='border-solid border-2 p-1'>selector</button>
-            
+                <button onClick={()=>{setPointerType("selector");}} className='border-solid border-2 p-1'>Selector</button>
+                <button onClick={()=>{setPointerType("animatePath");}} className='border-solid border-2 p-1'>Animate Path</button>
+                <button onClick={()=>{setPlay(!play)}} className='border-solid border-2 p-1'>Play Animation</button>
             </div>
             {/* Rows: {row} <br />
             Columns: {column} */}

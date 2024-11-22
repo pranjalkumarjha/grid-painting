@@ -8,9 +8,9 @@ const Provider = ({children})=>{
     const [column,setColumn] = useState(null); 
     const [chosenColor,setChosenColor] = useState('#ff0000');
     const [pointerType,setPointerType] = useState('precise');
-
+    const [play,setPlay] = useState(false);
     return (
-        <rowColContext.Provider value = {{row,column,setRow,setColumn,chosenColor,setChosenColor,pointerType,setPointerType}}>
+        <rowColContext.Provider value = {{row,column,setRow,setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay}}>
             {children}
         </rowColContext.Provider>
     );

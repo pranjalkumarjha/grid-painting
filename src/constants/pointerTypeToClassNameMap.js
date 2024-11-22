@@ -1,6 +1,7 @@
 const pointerToClassMap = {
     'precise': 'custom-dot',
-    'selector': 'arrow'
+    'selector': 'arrow',
+    'animatePath': 'arrow'
 } 
 
 export default pointerToClassMap;
