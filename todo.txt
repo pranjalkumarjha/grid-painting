@@ -4,5 +4,5 @@
 
 1. Feature: animate movement of shapes drawn
 
-2. 
+2. Feature: group curves by selecting
 3. 

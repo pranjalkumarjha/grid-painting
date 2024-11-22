@@ -1,3 +1,4 @@
+# A WHITEBOARD APPLICATION TO ANIMATE MOVEMENTS OF OBJECTS BY DRAWING THEIR PATHS 
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
