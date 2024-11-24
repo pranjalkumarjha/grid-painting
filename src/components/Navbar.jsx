@@ -1,20 +1,17 @@
 // Navbar.jsx
 import React, { useEffect, useState } from 'react'; 
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
+import { createGroup } from '../utils/createGroup.js';
 
 const Navbar = () => {
     const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups} = useRowCol(); //   Use the hook to access context values
     useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
-    const handleGroupSelectionOnClick = ()=>{ 
-        allGroups.current = [...allGroups.current,[...group]]; 
-        console.log(allGroups.current);
-        setGroup([]); 
-
-    }
+    
     return (
         <>
+        {/* keeping these two inputs  for memory sake */}
             <div className="navbar flex justify-center items-center gap-2 pt-2">
-                <input
+                {/* <input
                     type="number"
                     placeholder="Enter number of rows"
                     className="border-solid border-2 border-black pl-2"
@@ -31,7 +28,7 @@ const Navbar = () => {
                         if(e.target.value<=100)
                             setColumn(Number(e.target.value))}} 
                     min="1"
-                />
+                /> */}
                 Color Picker
                 <input type="color" id="chosenColor" name="chosenColor" value={chosenColor} onChange={(e)=>{setChosenColor(e.target.value)}}/>
                 select pointer type
@@ -39,11 +36,11 @@ const Navbar = () => {
                 <button onClick={()=>{setPointerType("selector");}} className='border-solid border-2 p-1'>Selector</button>
                 <button onClick={()=>{setPointerType("animatePath");}} className='border-solid border-2 p-1'>Animate Path</button>
                 <button onClick={()=>{setPlay(!play)}} className='border-solid border-2 p-1'>Play Animation</button>
-                <button onClick={handleGroupSelectionOnClick} className='border-solid border-2 p-1'>Group Selection</button>
+                <button onClick={()=>{createGroup(group,allGroups,setGroup);}} className='border-solid border-2 p-1'>Group Selection</button>
 
-            </div>
             {/* Rows: {row} <br />
             Columns: {column} */}
+            </div>
         </>
     );
 }

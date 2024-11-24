@@ -1,6 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
 import pointerToClassMap from '../constants/pointerTypeToClassNameMap.js';
+import { redrawCanvas } from '../utils/redrawCanvas.js';
+import { createAnimation } from '../utils/createAnimation.js';
+import { createOutline } from '../utils/createOutline.js';
+import { playAnimation } from '../utils/playAnimation.js';
 const Canvas = () => {
   const canvasRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
@@ -19,18 +23,7 @@ const Canvas = () => {
   const [offsetTop, setOffsetTop] = useState(0); // adjusting for the canvas not being on the topmost part of the page
   const currentPath = useRef([]);
   const longestAnimationLength = useRef(0);
-  const redrawCanvas = () => {
-    console.log(canvasRef.current.width, canvasRef.current.height);
-    ctx.current.clearRect(0, 0 - offsetTop, canvasRef.current.width, canvasRef.current.height); // maybe we could just clear a specific part in future and redraw only relevent curves and parts
-    curves.current.forEach((curve) => {
-      for (let i = 1; i < curve.length; i++) {
-        ctx.current.beginPath();
-        ctx.current.moveTo(curve[i - 1].x, curve[i - 1].y);
-        ctx.current.lineTo(curve[i].x, curve[i].y);
-        ctx.current.stroke();
-      }
-    });
-  }
+  
   const handleMouseUp = (e) => {
     console.log('mouseUp');
     if (currentCurve.current.length !== 0) {
@@ -41,79 +34,7 @@ const Canvas = () => {
 
     selectedCurve.current = -1;
     if (pointerType === 'animatePath' && previouslySelected.current !== -1 && currentPath.current.length !== 0) {
-      longestAnimationLength.current = Math.max(longestAnimationLength.current, currentPath.current.length);
-      let found = false;
-      for (let i = 0; i < allGroups.current.length; i++) {
-        
-
-        // Check if `previouslySelected.current` belongs to this group
-        for (let j = 0; j < allGroups.current[i].length; j++) {
-          if (allGroups.current[i][j] === previouslySelected.current) {
-            found = true;
-
-            // Iterate through all curves in the group
-            for (let k = 0; k < allGroups.current[i].length; k++) {
-              const curveIndex = allGroups.current[i][k];
-              const curvePoints = curves.current[curveIndex];
-
-              // Find the closest point in `curvePoints` to `currentPath.current[0]`
-              let offset = { x: 0, y: 0 }; // Default offset
-              if (curvePoints && curvePoints.length > 0) {
-                const closestPoint = curvePoints.reduce((closest, point) => {
-                  const currentDistance = Math.hypot(
-                    point.x - currentPath.current[0].x,
-                    point.y - currentPath.current[0].y
-                  );
-                  const closestDistance = Math.hypot(
-                    closest.x - currentPath.current[0].x,
-                    closest.y - currentPath.current[0].y
-                  );
-                  return currentDistance > closestDistance ? point : closest;
-                }, curvePoints[0]);
-
-                // Calculate the offset as the difference between the closest point and `currentPath.current[0]`
-                offset = {
-                  x: closestPoint.x - currentPath.current[0].x,
-                  y: closestPoint.y - currentPath.current[0].y
-                };
-              }
-
-              // Adjust `currentPath.current` by subtracting the offset
-              const adjustedPath = currentPath.current.map((point) => ({
-                x: point.x + offset.x,
-                y: point.y + offset.y
-              }));
-
-              // Push to `animationList` (replacing existing entry if necessary)
-              const existingAnimationIndex = animationList.current.findIndex(
-                (entry) => entry.curveIndex === curveIndex
-              );
-
-              if (existingAnimationIndex !== -1) {
-                animationList.current[existingAnimationIndex] = {
-                  curveIndex,
-                  path: adjustedPath
-                };
-              } else {
-                animationList.current.push({ curveIndex, path: adjustedPath });
-              }
-            }
-
-            // Exit the outer loops once the group is processed
-            break;
-          }
-        }
-
-        if (found) {
-          break;
-        }
-      }
-      if(!found){
-        animationList.current.push({ curveIndex:previouslySelected.current, path: currentPath.current });
-
-      }
-      console.log('animation list: ', animationList.current);
-      currentPath.current = [];
+      createAnimation(longestAnimationLength,currentPath,allGroups,animationList,previouslySelected,curves);
     }
     startingX.current = -1;
     startingY.current = -1;
@@ -149,33 +70,8 @@ const Canvas = () => {
           setGroup([...group, selectedCurve.current]);
         }
         //create outline rectangle
-        const curve = curves.current[selectedCurve.current];
-        let outlineRectanglePosition = {
-          smallX: 100000,
-          smallY: 100000,
-          largeX: 0,
-          largeY: 0
-        };
-        // getting the dimension of outline rectangle shown to highlight the curve selected (aka: blue rectangle)
-        for (let i = 0; i < curve.length; i++) {
-          outlineRectanglePosition.smallX = Math.min(outlineRectanglePosition.smallX, curve[i].x);
-          outlineRectanglePosition.smallY = Math.min(outlineRectanglePosition.smallY, curve[i].y);
-          outlineRectanglePosition.largeX = Math.max(outlineRectanglePosition.largeX, curve[i].x);
-          outlineRectanglePosition.largeY = Math.max(outlineRectanglePosition.largeY, curve[i].y);
-
-        }
-        // draw highlighted outline rectangle of selected curve
-        ctx.current.save();
-        console.log(outlineRectanglePosition);
-        ctx.current.strokeStyle = "blue";
-        ctx.current.lineWidth = 1;
-        ctx.current.strokeRect(
-          outlineRectanglePosition.smallX,
-          outlineRectanglePosition.smallY,
-          Math.abs(outlineRectanglePosition.smallX - outlineRectanglePosition.largeX),
-          Math.abs(outlineRectanglePosition.smallY - outlineRectanglePosition.largeY)
-        );
-        ctx.current.restore();
+        createOutline(curves,selectedCurve,ctx);
+        
       }
       console.log('curve index selected: ', selectedCurve.current);
     }
@@ -225,93 +121,14 @@ const Canvas = () => {
         curve[i].y = curve[i].y + dy;
       }
       // redrawing the whole canvas
-      redrawCanvas();
+      redrawCanvas(ctx,canvasRef,curves,offsetTop);
       startingX.current = e.clientX;
       startingY.current = e.clientY;
     }
   }
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   useEffect(() => {
-    const animate = async () => {
-      canvas = canvasRef.current;
-      ctx.current = canvas.getContext("2d");
-      setOffsetTop(canvas.getBoundingClientRect().top);
-      let tempCurves = structuredClone(curves.current); // Preferred method
-      console.log('temp Curves: ', tempCurves);
-      if (play) {
-        console.log("Play Clicked");
-
-        // Initialize animation control for each curve
-        const animateFor = {};
-        animationList.current.forEach((path) => (animateFor[path.curveIndex] = 1));
-        console.log("animate for object: ", animateFor);
-
-        let it = 0;
-
-        while (it < longestAnimationLength.current) {
-          ctx.current.clearRect(
-            0,
-            0 - offsetTop,
-            canvasRef.current.width,
-            canvasRef.current.height
-          );
-
-          curves.current.forEach((curve, index) => {
-            console.log("true or false", index, animateFor[index]);
-
-            const path = animationList.current.find(
-              (path) => path.curveIndex === index
-            )?.path;
-
-            if (animateFor[index] === 1 && path?.length >= it + 1) {
-              console.log("animated path for:", path);
-
-              const initialDisplacement = { x: 0, y: 0 };
-
-              for (let i = 0; i < curve.length; i++) {
-                let dx = 0;
-                let dy = 0;
-
-                if (it === 0) {
-                  // Compute displacement for the first iteration
-                  if (i === 0) {
-                    initialDisplacement.x = path[it].x - curve[i].x;
-                  }
-
-                  // Apply the same displacement to all points
-                  dx = initialDisplacement.x;
-                } else {
-                  // Incremental movement along the path for subsequent iterations
-                  dx = path[it].x - path[it - 1].x;
-                  dy = path[it].y - path[it - 1].y;
-                }
-
-                // Apply the computed displacement
-                curve[i].x += dx;
-                curve[i].y += dy;
-              }
-            }
-
-            // Update the curve positions
-            curves.current[index] = curve;
-          });
-
-          // Redraw the updated canvas
-          redrawCanvas();
-          console.log("it: ", it);
-          it++;
-
-          await delay(10);
-        }
-        console.log('temp Curves final: ', tempCurves);
-        curves.current = tempCurves;
-        redrawCanvas();
-        setPlay(false); // Stop animation
-      }
-    };
-
-    animate(); // Start the animation
+    playAnimation(canvas,canvasRef,ctx,curves,animationList,offsetTop,setOffsetTop,longestAnimationLength,play,setPlay);
   }, [play]);
 
 
