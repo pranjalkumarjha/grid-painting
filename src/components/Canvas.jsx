@@ -5,6 +5,7 @@ import { redrawCanvas } from '../utils/redrawCanvas.js';
 import { createAnimation } from '../utils/createAnimation.js';
 import { createOutline } from '../utils/createOutline.js';
 import { playAnimation } from '../utils/playAnimation.js';
+import { erase } from '../utils/eraser.js';
 const Canvas = () => {
   const canvasRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
@@ -76,21 +77,8 @@ const Canvas = () => {
       console.log('curve index selected: ', selectedCurve.current);
     }
     else if (pointerType === 'eraser') {
-      for (let index = 0; index < curves.current.length; index++) {
-        const curve = curves.current[index];
-        for (let i = 0; i < curve.length; i++) {
-          const point = curve[i];
-        
-          if (
-            Math.abs(point.x - e.clientX) <= eraserWidth / 2 &&
-            Math.abs(point.y - (e.clientY - offsetTop)) <= eraserWidth / 2
-          ) {
-            curves.current.splice(index, 1); // Remove the curve
-            index--; // Adjust index due to removal
-            break; // Break out of the inner loop
-          }
-        }
-      }
+      erase(curves,e,offsetTop,eraserWidth);
+      
       redrawCanvas(ctx, canvasRef, curves, offsetTop); // Redraw after erasing
     }
     if (startingX.current === -1 && startingY.current === -1) { // starting(x,y) of an arc drawing
@@ -124,21 +112,7 @@ const Canvas = () => {
         currentPath.current.push({ x: e.clientX, y: e.clientY - offsetTop });
       }
       else  if (pointerType === 'eraser' && mouseDown.current) {
-        for (let index = 0; index < curves.current.length; index++) {
-          const curve = curves.current[index];
-          for (let i = 0; i < curve.length; i++) {
-            const point = curve[i];
-           
-            if (
-              Math.abs(point.x - e.clientX) <= eraserWidth / 2 &&
-              Math.abs(point.y - (e.clientY - offsetTop)) <= eraserWidth / 2
-            ) {
-              curves.current.splice(index, 1); // Remove the curve
-              index--; // Adjust index due to removal
-              break; // Break out of the inner loop
-            }
-          }
-        }
+        erase(curves,e,offsetTop,eraserWidth);
         redrawCanvas(ctx, canvasRef, curves, offsetTop); // Redraw after erasing
       }
       
