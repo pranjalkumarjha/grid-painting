@@ -37,7 +37,8 @@ const Navbar = () => {
                 <button onClick={()=>{setPointerType("animatePath");}} className='border-solid border-2 p-1'>Animate Path</button>
                 <button onClick={()=>{setPlay(!play)}} className='border-solid border-2 p-1'>Play Animation</button>
                 <button onClick={()=>{createGroup(group,allGroups,setGroup);}} className='border-solid border-2 p-1'>Group Selection</button>
-
+                <button onClick={()=>{setPointerType("eraser");}} className='border-solid border-2 p-1'>Eraser</button>
+            
             {/* Rows: {row} <br />
             Columns: {column} */}
             </div>

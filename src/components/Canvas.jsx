@@ -8,7 +8,7 @@ import { playAnimation } from '../utils/playAnimation.js';
 const Canvas = () => {
   const canvasRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const { pointerType, play, setPlay, group, setGroup, curves, allGroups } = useRowCol();
+  const { pointerType, play, setPlay, group, setGroup, curves, allGroups, eraserWidth} = useRowCol();
   const currentCurve = useRef([]);
   const startingX = useRef(-1);
   const startingY = useRef(-1);
@@ -75,6 +75,24 @@ const Canvas = () => {
       }
       console.log('curve index selected: ', selectedCurve.current);
     }
+    else if (pointerType === 'eraser') {
+      for (let index = 0; index < curves.current.length; index++) {
+        const curve = curves.current[index];
+        for (let i = 0; i < curve.length; i++) {
+          const point = curve[i];
+        
+          if (
+            Math.abs(point.x - e.clientX) <= eraserWidth / 2 &&
+            Math.abs(point.y - (e.clientY - offsetTop)) <= eraserWidth / 2
+          ) {
+            curves.current.splice(index, 1); // Remove the curve
+            index--; // Adjust index due to removal
+            break; // Break out of the inner loop
+          }
+        }
+      }
+      redrawCanvas(ctx, canvasRef, curves, offsetTop); // Redraw after erasing
+    }
     if (startingX.current === -1 && startingY.current === -1) { // starting(x,y) of an arc drawing
 
       startingX.current = e.clientX;
@@ -85,6 +103,9 @@ const Canvas = () => {
       else if (pointerType === 'animatePath') {
         currentPath.current.push({ x: e.clientX, y: e.clientY - offsetTop });
       }
+      
+      
+      
       mouseDown.current = true;
     }
   }
@@ -102,13 +123,36 @@ const Canvas = () => {
       else if (pointerType === 'animatePath') {
         currentPath.current.push({ x: e.clientX, y: e.clientY - offsetTop });
       }
-      console.log('mouseup: starting(x,y) and ending(x,y):', startingX.current, startingY.current, cursorPosition.x, cursorPosition.y);
-      ctx.current.beginPath();
-      ctx.current.moveTo(startingX.current, startingY.current - offsetTop);
-      ctx.current.lineTo(cursorPosition.x, cursorPosition.y - offsetTop);
-      ctx.current.stroke();
-      startingX.current = cursorPosition.x;
-      startingY.current = cursorPosition.y;
+      else  if (pointerType === 'eraser' && mouseDown.current) {
+        for (let index = 0; index < curves.current.length; index++) {
+          const curve = curves.current[index];
+          for (let i = 0; i < curve.length; i++) {
+            const point = curve[i];
+           
+            if (
+              Math.abs(point.x - e.clientX) <= eraserWidth / 2 &&
+              Math.abs(point.y - (e.clientY - offsetTop)) <= eraserWidth / 2
+            ) {
+              curves.current.splice(index, 1); // Remove the curve
+              index--; // Adjust index due to removal
+              break; // Break out of the inner loop
+            }
+          }
+        }
+        redrawCanvas(ctx, canvasRef, curves, offsetTop); // Redraw after erasing
+      }
+      
+      
+      if(pointerType!=='eraser'){
+        console.log('mouseup: starting(x,y) and ending(x,y):', startingX.current, startingY.current, cursorPosition.x, cursorPosition.y);
+        ctx.current.beginPath();
+        ctx.current.moveTo(startingX.current, startingY.current - offsetTop);
+        ctx.current.lineTo(cursorPosition.x, cursorPosition.y - offsetTop);
+        ctx.current.stroke();
+        startingX.current = cursorPosition.x;
+        startingY.current = cursorPosition.y;
+      }
+      
     }
     if (mouseDown.current && pointerType === 'selector' && selectedCurve.current !== -1) {
       let dx = Number(e.clientX) - Number(startingX.current);
@@ -125,6 +169,7 @@ const Canvas = () => {
       startingX.current = e.clientX;
       startingY.current = e.clientY;
     }
+   
   }
 
   useEffect(() => {
@@ -134,7 +179,7 @@ const Canvas = () => {
 
 
   return (
-    <div className={`canvas-container w-screen h-screen overflow-auto border border-black  ${pointerToClassMap[pointerType] !== 'custom-dot' ? 'cursor-default' : 'cursor-none'}`}
+    <div className={`canvas-container w-screen h-screen overflow-auto border border-black  ${((pointerToClassMap[pointerType] !== 'custom-dot') && (pointerToClassMap[pointerType] !== 'eraser')) ? 'cursor-default' : 'cursor-none'}`}
 
       onMouseDown={(e) => {
         handleMouseDown(e);
@@ -146,7 +191,7 @@ const Canvas = () => {
         handleMouseMove(e);
       }}
     >
-      <canvas ref={canvasRef} width="1500" height="1500" />
+      <canvas ref={canvasRef} width={window. innerWidth} height={window. innerHeight}/>
 
       <div
         className={`${pointerToClassMap[pointerType]}`}

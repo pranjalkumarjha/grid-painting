@@ -69,8 +69,19 @@ const createAnimation = (longestAnimationLength,currentPath,allGroups,animationL
       }
     }
     if(!found){
-      animationList.current.push({ curveIndex:previouslySelected.current, path: currentPath.current });
+      const curveIndex = previouslySelected.current; 
+      const existingAnimationIndex = animationList.current.findIndex(
+        (entry) => entry.curveIndex === curveIndex
+      );
 
+      if (existingAnimationIndex !== -1) {
+        animationList.current[existingAnimationIndex] = {
+          curveIndex,
+          path: currentPath.current
+        };
+      } else {
+        animationList.current.push({ curveIndex, path: currentPath.current });
+      }
     }
     console.log('animation list: ', animationList.current);
     currentPath.current = [];

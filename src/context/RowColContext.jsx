@@ -12,8 +12,9 @@ const Provider = ({children})=>{
     const [group,setGroup] = useState([]);
     const curves = useRef([]);
     const allGroups = useRef([]);
+    const [eraserWidth,setEraserWidth] = useState(10);
     return (
-        <rowColContext.Provider value = {{row,column,setRow,setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups}}>
+        <rowColContext.Provider value = {{row,column,setRow,setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups,eraserWidth,setEraserWidth}}>
             {children}
         </rowColContext.Provider>
     );
