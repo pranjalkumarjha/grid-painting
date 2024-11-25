@@ -20,7 +20,7 @@ const Navbar = () => {
     useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
     const handleKeyDown = (e)=>{
         if(e.key === 'Enter'){
-            fetch(`${serverUrl}joinRoom?roomId=123`).then((response)=>{
+            fetch(`${serverUrl}joinRoom?roomId=${roomId}`).then((response)=>{
                 if(!response.ok){
                     throw new Error('Unable to connect to room')
                 }
