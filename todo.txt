@@ -1,14 +1,14 @@
 
-0.Feature: recognize as one figure 
+0.#done Feature: recognize as one figure 
            (lasso or highlight square which leads to everything inside it to become one unit and they can be moved around by selecting) 
 
-1. Feature: animate movement of shapes drawn
+1.#done Feature: animate movement of shapes drawn
 
-2. Feature: group curves by selecting 
+2.#done Feature: group curves by selecting 
             added: create group 
             added: animate group 
-           #need to add: outline all curves once one curve of group is selected 
-3. Feature: Eraser (objects and paths)
+       *****need to add: outline all curves once one curve of group is selected***** 
+3.#done Feature: Eraser (objects and paths)
 
 4. Feature: undo/redo 
 

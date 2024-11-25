@@ -13,8 +13,22 @@ const Provider = ({children})=>{
     const curves = useRef([]);
     const allGroups = useRef([]);
     const [eraserWidth,setEraserWidth] = useState(10);
+    const [roomId,setRoomId] = useState('');
     return (
-        <rowColContext.Provider value = {{row,column,setRow,setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups,eraserWidth,setEraserWidth}}>
+        <rowColContext.Provider value = {
+            {
+                row,column,
+                setRow,setColumn,
+                chosenColor,
+                setChosenColor,
+                pointerType,setPointerType,
+                play,setPlay,
+                group,setGroup,
+                curves,allGroups,
+                eraserWidth,setEraserWidth,
+                roomId, setRoomId
+            }
+        }>
             {children}
         </rowColContext.Provider>
     );

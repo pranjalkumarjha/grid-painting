@@ -2,11 +2,36 @@
 import React, { useEffect, useState } from 'react'; 
 import { useRowCol } from '../context/RowColContext.jsx'; // Import the custom hook
 import { createGroup } from '../utils/createGroup.js';
+const serverUrl = process.env.REACT_APP_SERVER_URL;
 
 const Navbar = () => {
-    const { row, column, setRow, setColumn,chosenColor,setChosenColor,pointerType,setPointerType,play,setPlay,group,setGroup,curves,allGroups} = useRowCol(); //   Use the hook to access context values
-    useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
+    const { 
+            row, column, 
+            setRow, setColumn,
+            chosenColor,setChosenColor,
+            pointerType,setPointerType,
+            play,setPlay,
+            group,setGroup,
+            curves,
+            allGroups,
+            roomId,setRoomId
+        } = useRowCol();  
     
+    useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
+    const handleKeyDown = (e)=>{
+        if(e.key === 'Enter'){
+            fetch(`${serverUrl}/joinRoom?roomId=123`).then((response)=>{
+                if(!response.ok){
+                    throw new Error('Unable to connect to room')
+                }
+                return response.json();
+            }).then((data)=>{
+                console.log(data);
+            }).catch((error)=>{
+                console.log(error.message);
+            })
+        }
+    }
     return (
         <>
         {/* keeping these two inputs  for memory sake */}
@@ -29,6 +54,15 @@ const Navbar = () => {
                             setColumn(Number(e.target.value))}} 
                     min="1"
                 /> */}
+                <input 
+                    className='text-center' 
+                    type="text" 
+                    placeholder='Join Room' 
+                    onKeyDown={e=>handleKeyDown(e)} 
+                    onChange={
+                        (e) => setRoomId(e.target.value)
+                    }
+                    value={roomId}/>
                 Color Picker
                 <input type="color" id="chosenColor" name="chosenColor" value={chosenColor} onChange={(e)=>{setChosenColor(e.target.value)}}/>
                 select pointer type
@@ -38,7 +72,7 @@ const Navbar = () => {
                 <button onClick={()=>{setPlay(!play)}} className='border-solid border-2 p-1'>Play Animation</button>
                 <button onClick={()=>{createGroup(group,allGroups,setGroup);}} className='border-solid border-2 p-1'>Group Selection</button>
                 <button onClick={()=>{setPointerType("eraser");}} className='border-solid border-2 p-1'>Eraser</button>
-            
+                
             {/* Rows: {row} <br />
             Columns: {column} */}
             </div>

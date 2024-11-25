@@ -91,9 +91,7 @@ const Canvas = () => {
       else if (pointerType === 'animatePath') {
         currentPath.current.push({ x: e.clientX, y: e.clientY - offsetTop });
       }
-      
-      
-      
+
       mouseDown.current = true;
     }
   }
