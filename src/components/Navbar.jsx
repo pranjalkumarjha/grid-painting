@@ -18,20 +18,20 @@ const Navbar = () => {
         } = useRowCol();  
     
     useEffect(()=>{console.log('pointerType: ',pointerType);},[pointerType]);
-    const handleKeyDown = (e)=>{
-        if(e.key === 'Enter'){
-            fetch(`${serverUrl}joinRoom?roomId=${roomId}`).then((response)=>{
-                if(!response.ok){
-                    throw new Error('Unable to connect to room')
-                }
-                return response.json();
-            }).then((data)=>{
-                console.log(data);
-            }).catch((error)=>{
-                console.log(error.message);
-            })
-        }
-    }
+    // const handleKeyDown = (e)=>{
+    //     if(e.key === 'Enter'){
+    //         fetch(`${serverUrl}joinRoom?roomId=${roomId}`).then((response)=>{
+    //             if(!response.ok){
+    //                 throw new Error('Unable to connect to room')
+    //             }
+    //             return response.json();
+    //         }).then((data)=>{
+    //             console.log(data);
+    //         }).catch((error)=>{
+    //             console.log(error.message);
+    //         })
+    //     }
+    // }
     return (
         <>
         {/* keeping these two inputs  for memory sake */}
@@ -54,7 +54,7 @@ const Navbar = () => {
                             setColumn(Number(e.target.value))}} 
                     min="1"
                 /> */}
-                <input 
+                {/* <input 
                     className='text-center' 
                     type="text" 
                     placeholder='Join Room' 
@@ -62,7 +62,7 @@ const Navbar = () => {
                     onChange={
                         (e) => setRoomId(e.target.value)
                     }
-                    value={roomId}/>
+                    value={roomId}/> */}
                 Color Picker
                 <input type="color" id="chosenColor" name="chosenColor" value={chosenColor} onChange={(e)=>{setChosenColor(e.target.value)}}/>
                 select pointer type
