@@ -9,7 +9,7 @@ import { erase } from '../utils/eraser.js';
 const Canvas = () => {
   const canvasRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const { pointerType, play, setPlay, group, setGroup, curves, allGroups, eraserWidth} = useRowCol();
+  const { pointerType, play, setPlay, group, setGroup, curves, allGroups, eraserWidth,animationList,longestAnimationLength} = useRowCol();
   const currentCurve = useRef([]);
   const startingX = useRef(-1);
   const startingY = useRef(-1);
@@ -20,10 +20,9 @@ const Canvas = () => {
   const selectedCurve = useRef(-1);
   let canvas = null;
   const selectionResolution = 10; // number of pixels +- we select something
-  const animationList = useRef([]);
+ 
   const [offsetTop, setOffsetTop] = useState(0); // adjusting for the canvas not being on the topmost part of the page
   const currentPath = useRef([]);
-  const longestAnimationLength = useRef(0);
   
   const handleMouseUp = (e) => {
     console.log('mouseUp');

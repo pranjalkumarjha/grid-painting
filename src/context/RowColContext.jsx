@@ -13,7 +13,9 @@ const Provider = ({children})=>{
     const curves = useRef([]);
     const allGroups = useRef([]);
     const [eraserWidth,setEraserWidth] = useState(10);
-    const [roomId,setRoomId] = useState('');
+    const animationList = useRef([]);
+    const longestAnimationLength = useRef(0);
+
     return (
         <rowColContext.Provider value = {
             {
@@ -26,7 +28,7 @@ const Provider = ({children})=>{
                 group,setGroup,
                 curves,allGroups,
                 eraserWidth,setEraserWidth,
-                roomId, setRoomId
+                animationList,longestAnimationLength
             }
         }>
             {children}

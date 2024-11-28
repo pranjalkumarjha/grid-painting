@@ -49,3 +49,7 @@ body{
     border: solid;
     border-width: 1px;
 }
+.navbar {
+    z-index: 10; /* Ensure it's above the canvas */
+    pointer-events: auto; /* Allow interactions */
+}
